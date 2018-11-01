@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import com.danmealon.smack.R
 import com.danmealon.smack.Services.AuthService
+import com.danmealon.smack.Services.UserDataService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import java.util.*
 
@@ -55,13 +56,22 @@ class CreateUserActivity : AppCompatActivity() {
 
     fun createUserClicked(view:View){
 
-        val password = createPasswordText.text.toString()//password is an id of username field
+        val userName = createUserNameText.text.toString()
         val email = createEmailText.text.toString()
+        val password = createPasswordText.text.toString()//password is an id of username field
+
         AuthService.registerUser(this, email,password){registerSuccess->
             if (registerSuccess){
                 AuthService.loginUser(this, email, password) {loginSuccess->
                     if(loginSuccess){
-
+                        AuthService.createUser(this,userName,email,userAvatar, avatarColor) {createSuccess->
+                            if (createSuccess){
+                                println(UserDataService.avatarName)
+                                println(UserDataService.avatarColor)
+                                println(UserDataService.name)
+                                finish()
+                            }
+                        }
                     }
                 }
 
