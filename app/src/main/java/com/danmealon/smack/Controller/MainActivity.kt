@@ -1,15 +1,12 @@
-package com.danmealon.smack
+package com.danmealon.smack.Controller
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
+import com.danmealon.smack.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -21,7 +18,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(   //drawer that comes out from the left on main activity
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -37,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     fun loginBtnNavClicked(view:View){ //view:View to import View class
         //explicit intent as we know where we are sending intent to
-        val loginIntent = Intent(this,LoginActivity::class.java)//this - context; LoginActivity - where we are navigating
+        val loginIntent = Intent(this, LoginActivity::class.java)//this - context; LoginActivity - where we are navigating
         startActivity(loginIntent)
     }
 
