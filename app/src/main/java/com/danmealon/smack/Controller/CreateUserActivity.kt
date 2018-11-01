@@ -54,8 +54,16 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserClicked(view:View){
-        AuthService.registerUser(this, "dan.mealon@outlook.com","123456"){complete->
-            if (complete){
+
+        val password = createPasswordText.text.toString()//password is an id of username field
+        val email = createEmailText.text.toString()
+        AuthService.registerUser(this, email,password){registerSuccess->
+            if (registerSuccess){
+                AuthService.loginUser(this, email, password) {loginSuccess->
+                    if(loginSuccess){
+
+                    }
+                }
 
             }
 
