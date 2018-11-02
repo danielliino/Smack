@@ -18,7 +18,7 @@ object AuthService {
     //we call this Singleton from CreateUserActivity
     //To register a user we need to know email and password; for web request we also need a context and we also need lambda - functional literal
 
-    fun registerUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) { //Unit means it returns nothing
+    fun registerUser(email: String, password: String, complete: (Boolean) -> Unit) { //Unit means it returns nothing
 
         // we need a json body here, cause it is json object that we are passing along with web request so that when we hit the API it can check the json body if we have the expected parameters (email, password)
         val jsonBody = JSONObject()
@@ -48,7 +48,7 @@ object AuthService {
 
     }
 
-    fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit){
+    fun loginUser(email: String, password: String, complete: (Boolean) -> Unit){
 
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
@@ -89,7 +89,7 @@ object AuthService {
         App.prefs.requestQueue.add(loginRequest)
         }
 
-    fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
+    fun createUser(name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
 
         //creating body
         val jsonBody = JSONObject()

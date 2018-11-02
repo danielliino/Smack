@@ -16,7 +16,7 @@ object MessageService {
 
     //function that that traverse an array of channels.
 
-    fun getChannels(context: Context, complete: (Boolean)->Unit){
+    fun getChannels(complete: (Boolean)->Unit){
         val channelsRequest = object : JsonArrayRequest(Method.GET, URL_GET_CHANNELS, null, Response.Listener { response ->
 
             //looping and extracting info that we need
