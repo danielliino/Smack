@@ -18,11 +18,16 @@ import com.danmealon.smack.R
 import com.danmealon.smack.Services.AuthService
 import com.danmealon.smack.Services.UserDataService
 import com.danmealon.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.danmealon.smack.Utilities.SOCKET_URL
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    //socket creation
+    val socket = IO.socket(SOCKET_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +43,25 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
         hideKeyboard()
 
-        //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different)
+    }
+
+    //connecting socket to API
+    //remember Activity life cycle
+
+    override fun onResume() {
+        //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different); note that you need to unregister it when you leave the activity
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))
+        socket.connect()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        //we destroy when we disconnecting from socket connection
+        socket.disconnect()
+        //unregistering broadcast receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReceiver)
+        super.onDestroy()
     }
 
     //creating receiver (when the user's data changes i.e. user login, our create a new user or logout, then we could call this receiver )
@@ -107,11 +128,12 @@ class MainActivity : AppCompatActivity() {
                     val channelDesc = descTextField.text.toString()
 
                     //Create channel with the channel name and description
-                    hideKeyboard()
+                    socket.emit("newChannel", channelName, channelDesc)
+
                 }
                 .setNegativeButton("Cancel"){dialogInterface, i ->
                     //cancel and close the dialog
-                    hideKeyboard()
+
                 }
                 .show()
 
@@ -119,6 +141,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMsgBtnClicked(view:View){
+        hideKeyboard()
 
     }
 
