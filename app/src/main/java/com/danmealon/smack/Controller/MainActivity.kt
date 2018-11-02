@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                 val resourceId = resources.getIdentifier(UserDataService.avatarName,"drawable",
                     packageName)
                 userImageNavHeader.setImageResource(resourceId)
+                userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
                 loginBtnNavHeader.text = "Logout"
             }
         }
@@ -64,9 +66,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loginBtnNavClicked(view:View){ //view:View to import View class
-        //explicit intent as we know where we are sending intent to
-        val loginIntent = Intent(this, LoginActivity::class.java)//this - context; LoginActivity - where we are navigating
-        startActivity(loginIntent)
+
+        if (AuthService.isLoggedIn){
+        // log out (will clear out all user's data)
+            UserDataService.logout()
+            //setting everything back to default
+            userNameNavHeader.text = "Login"
+            userEmailNavHeader.text = ""
+            userImageNavHeader.setImageResource(R.drawable.profiledefault)
+            userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
+            loginBtnNavHeader.text = "Login"
+
+        }else{
+            //explicit intent as we know where we are sending intent to
+            val loginIntent = Intent(this, LoginActivity::class.java)//this - context; LoginActivity - where we are navigating
+            startActivity(loginIntent)
+        }
     }
 
     fun addChannelClicked(view:View){

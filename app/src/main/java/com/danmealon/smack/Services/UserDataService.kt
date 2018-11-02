@@ -1,5 +1,6 @@
 package com.danmealon.smack.Services
 
+import android.graphics.Color
 import java.util.*
 
 object UserDataService {
@@ -9,6 +10,19 @@ object UserDataService {
     var avatarName = ""
     var email = ""
     var name = ""
+
+    fun logout(){
+
+        id = ""
+        avatarColor = ""
+        avatarName = ""
+        email = ""
+        name = ""
+        AuthService.authToken = ""
+        AuthService.userEmail = ""
+        AuthService.isLoggedIn = false
+
+    }
 
     //function to store background color, we returning int instead of color because it is the way android works, when you create a color it is actually an int
     fun returnAvatarColor(components: String) : Int {
@@ -26,6 +40,13 @@ object UserDataService {
         var b = 0;
 
         val scanner = Scanner(strippedColor)
+        if (scanner.hasNext()){ //to make sure there is something to traverse
+            r = (scanner.nextDouble()*255).toInt() //converting double to int (0-255)
+            g = (scanner.nextDouble()*255).toInt()
+            b = (scanner.nextDouble()*255).toInt()
 
+        }
+        //finally returning int
+        return Color.rgb(r,g,b)
     }
 }
