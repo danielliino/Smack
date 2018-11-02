@@ -2,6 +2,7 @@ package com.danmealon.smack.Utilities
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.android.volley.toolbox.Volley
 
 class SharedPrefs(context: Context) {
     val PREFS_FILENAME = "prefs"
@@ -25,4 +26,9 @@ class SharedPrefs(context: Context) {
     var userEmail: String
     get() = prefs.getString(USER_EMAIL,"")
     set(value) = prefs.edit().putString(USER_EMAIL,value).apply()
+
+    //creating one request queue for all app
+    val requestQueue = Volley.newRequestQueue(context)
+
+
 }

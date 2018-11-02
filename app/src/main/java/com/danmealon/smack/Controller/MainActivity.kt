@@ -58,6 +58,12 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
         setupAdapters()
 
+        //check to see if we logged in, if we are that we will update the UI and start downloading channels
+        //so even after we stopped emulator we are still logged in
+        if (App.prefs.isLoggedIn){
+            AuthService.findUserByEmail(this){}
+        }
+
 
     }
 
@@ -85,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     private val userDataChangeReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent?) {//when we receive a broadcast this function is called
             //whenever the broadcast has been sent out, whatever we wants then to happen, happens here
-            if (AuthService.isLoggedIn){
+            if (App.prefs.isLoggedIn){
                 userNameNavHeader.text = UserDataService.name
                 userEmailNavHeader.text = UserDataService.email
                 //getting resource id
@@ -115,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
     fun loginBtnNavClicked(view:View){ //view:View to import View class
 
-        if (AuthService.isLoggedIn){
+        if (App.prefs.isLoggedIn){
         // log out (will clear out all user's data)
             UserDataService.logout()
             //setting everything back to default
@@ -135,7 +141,7 @@ class MainActivity : AppCompatActivity() {
     fun addChannelClicked(view:View){
 
         //creating alert dialog
-        if (AuthService.isLoggedIn){
+        if (App.prefs.isLoggedIn){
             val builder = AlertDialog.Builder(this)
             //creating alert dialog view by using inflater (tool that creates view from xml)
             val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)

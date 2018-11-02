@@ -8,6 +8,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.danmealon.smack.Controller.App
 import com.danmealon.smack.Utilities.*
 import org.json.JSONException
 import org.json.JSONObject
@@ -16,11 +17,6 @@ object AuthService {
 
     //we call this Singleton from CreateUserActivity
     //To register a user we need to know email and password; for web request we also need a context and we also need lambda - functional literal
-
-    //variables to store auth token, users email, and boolean called isLoggedIn
-    var isLoggedIn = false
-    var userEmail = ""
-    var authToken = ""
 
     fun registerUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) { //Unit means it returns nothing
 
@@ -48,7 +44,7 @@ object AuthService {
             }
         }
         //once we have request created then we need to add it to request queue
-        Volley.newRequestQueue(context).add(registerRequest)
+        App.prefs.requestQueue.add(registerRequest)
 
     }
 
@@ -67,9 +63,9 @@ object AuthService {
             try{
 
                 //we are entering json object and then saying get a string (value that is returned from API), and then we access it by the key (token)
-                userEmail = response.getString("user")
-                authToken = response.getString("token")
-                isLoggedIn = true
+                App.prefs.userEmail = response.getString("user")
+                App.prefs.authToken = response.getString("token")
+                App.prefs.isLoggedIn = true
                 complete(true)
 
             }catch (e: JSONException){
@@ -90,7 +86,7 @@ object AuthService {
             }
         }
         //adding to request queue
-        Volley.newRequestQueue(context).add(loginRequest)
+        App.prefs.requestQueue.add(loginRequest)
         }
 
     fun createUser(context: Context, name: String, email: String, avatarName: String, avatarColor: String, complete: (Boolean) -> Unit) {
@@ -137,16 +133,16 @@ object AuthService {
                 //we need to a header cause we are dealing with locked API endpoint, cause othervise we will hit to 401 error
                 override fun getHeaders(): MutableMap<String, String> {
                     val headers = HashMap<String, String>()
-                    headers.put("Authorization", "Bearer $authToken")
+                    headers.put("Authorization", "Bearer ${App.prefs.authToken}")
                     return headers
                 }
             }
-        Volley.newRequestQueue(context).add(createRequest)
+        App.prefs.requestQueue.add(createRequest)
     }
 
     fun findUserByEmail (context: Context, complete: (Boolean) -> Unit) {
         //creating web request; concatinating endpoint
-        val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER$userEmail",null,Response.Listener { response->
+        val findUserRequest = object: JsonObjectRequest(Method.GET, "$URL_GET_USER${App.prefs.userEmail}",null,Response.Listener { response->
 
             //extracting info by the key and save it in userDataService
             try{
@@ -177,11 +173,11 @@ object AuthService {
             //we need to a header cause we are dealing with locked API endpoint, cause othervise we will hit to 401 error
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer $authToken")
+                headers.put("Authorization", "Bearer ${App.prefs.authToken}")
                 return headers
             }
         }
-        Volley.newRequestQueue(context).add(findUserRequest)
+        App.prefs.requestQueue.add(findUserRequest)
     }
 
     }
