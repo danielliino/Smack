@@ -9,8 +9,11 @@ import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.danmealon.smack.R
 import com.danmealon.smack.Services.AuthService
 import com.danmealon.smack.Services.UserDataService
@@ -33,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+        hideKeyboard()
 
         //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different)
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
@@ -86,9 +90,45 @@ class MainActivity : AppCompatActivity() {
 
     fun addChannelClicked(view:View){
 
+        //creating alert dialog
+        if (AuthService.isLoggedIn){
+            val builder = AlertDialog.Builder(this)
+            //creating alert dialog view by using inflater (tool that creates view from xml)
+            val dialogView = layoutInflater.inflate(R.layout.add_channel_dialog, null)
+            //building our dialog
+            builder.setView(dialogView)
+                .setPositiveButton("Add"){ dialogInterface, i ->
+                    //perform some logic when clicked
+                    //referencing to ui elements
+                    val nameTextField = dialogView.findViewById<EditText>(R.id.addChannelNameTxt)
+                    val descTextField = dialogView.findViewById<EditText>(R.id.addChannelDescTxt)
+                    //get text out of these fields
+                    val channelName = nameTextField.text.toString()
+                    val channelDesc = descTextField.text.toString()
+
+                    //Create channel with the channel name and description
+                    hideKeyboard()
+                }
+                .setNegativeButton("Cancel"){dialogInterface, i ->
+                    //cancel and close the dialog
+                    hideKeyboard()
+                }
+                .show()
+
+        }
     }
 
     fun sendMsgBtnClicked(view:View){
+
+    }
+
+    //function that hides keyboard once we click login on login page
+
+    fun hideKeyboard(){ //our keyboard is InputMethod that returns an object, and we cast that object as InputMethodManager
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager //as means casting
+        if (inputManager.isAcceptingText){
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken,0) //windowToken that we are getting grubs whatever is in focus
+        }
 
     }
 }
