@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.danmealon.smack.Model.Channel
 import com.danmealon.smack.R
@@ -32,6 +33,13 @@ class MainActivity : AppCompatActivity() {
 
     //socket creation
     val socket = IO.socket(SOCKET_URL)
+    //creating an adapter for list view if Channels type
+    lateinit var channelAdapter: ArrayAdapter<Channel>
+    private fun setupAdapters(){
+        channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
+        //adding adapter to list view
+        channel_list.adapter = channelAdapter
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +56,8 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-        hideKeyboard()
+        setupAdapters()
+
 
     }
 
@@ -74,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     //creating receiver (when the user's data changes i.e. user login, our create a new user or logout, then we could call this receiver )
 
     private val userDataChangeReceiver = object: BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {//when we receive a broadcast this function is called
+        override fun onReceive(context: Context, intent: Intent?) {//when we receive a broadcast this function is called
             //whenever the broadcast has been sent out, whatever we wants then to happen, happens here
             if (AuthService.isLoggedIn){
                 userNameNavHeader.text = UserDataService.name
@@ -85,6 +94,13 @@ class MainActivity : AppCompatActivity() {
                 userImageNavHeader.setImageResource(resourceId)
                 userImageNavHeader.setBackgroundColor(UserDataService.returnAvatarColor(UserDataService.avatarColor))
                 loginBtnNavHeader.text = "Logout"
+                //calling getChannels() function that tells the adapter that the data is changed so we need to reload listView
+                MessageService.getChannels(context){ complete ->
+                    if(complete){
+                        channelAdapter.notifyDataSetChanged()
+                    }
+
+                }
             }
         }
     }
@@ -161,9 +177,8 @@ class MainActivity : AppCompatActivity() {
             val newChannel = Channel(channelName, channelDescription, channelId)
             //saving object in message service channel array
             MessageService.channels.add(newChannel)
-            println(newChannel.name)
-            println(newChannel.description)
-            println(newChannel.id)
+
+            channelAdapter.notifyDataSetChanged()
         }
     }
 
