@@ -131,6 +131,16 @@ class MainActivity : AppCompatActivity() {
     fun updateWithChannel(){
         mainChannelName.text = "#${selectedChannel?.name}"
         //download messages for channel
+        if (selectedChannel != null){
+            MessageService.getMessages(selectedChannel!!.id){ complete ->
+                if (complete){
+                    for (message in MessageService.messages){
+                        println(message.message)
+                    }
+                }
+
+            }
+        }
     }
 
     override fun onBackPressed() {
@@ -194,36 +204,45 @@ class MainActivity : AppCompatActivity() {
     //emit listener creation, we use the array of type any
 
     private val onNewChannel = Emitter.Listener { args ->  //background thread
-        //we say that this listener is on background/ worker thread and we need to get back to main thread to Update our UI
-        runOnUiThread {
-            //we are back on UI thread now, we can update our listView
-            val channelName = args[0] as String
-            val channelDescription =  args[1] as String
-            val channelId = args[2] as String
 
-            //new channel object creation
-            val newChannel = Channel(channelName, channelDescription, channelId)
-            //saving object in message service channel array
-            MessageService.channels.add(newChannel)
+        if (App.prefs.isLoggedIn) {
+            //we say that this listener is on background/ worker thread and we need to get back to main thread to Update our UI
+            runOnUiThread {
+                //we are back on UI thread now, we can update our listView
+                val channelName = args[0] as String
+                val channelDescription =  args[1] as String
+                val channelId = args[2] as String
 
-            channelAdapter.notifyDataSetChanged()
+                //new channel object creation
+                val newChannel = Channel(channelName, channelDescription, channelId)
+                //saving object in message service channel array
+                MessageService.channels.add(newChannel)
+
+                channelAdapter.notifyDataSetChanged()
+            }
         }
     }
 
-    private val onNewMessage = Emitter.Listener { args ->  
+    private val onNewMessage = Emitter.Listener { args ->
 
-        runOnUiThread {
-            val msgBody = args[0] as String
-            val channelId = args[2] as String
-            val userName = args[3] as String
-            val usetAvatar = args[4] as String
-            val usetAvatarColor = args[5] as String
-            val id = args[6] as String
-            val timeStamp = args[7] as String
+        if(App.prefs.isLoggedIn) {
 
-            val newMessage = Message(msgBody, userName, channelId, usetAvatar, usetAvatarColor, id, timeStamp)
-            MessageService.messages.add(newMessage)
-            println(newMessage.message)
+            runOnUiThread {
+
+                val channelId = args[2] as String
+                if (channelId == selectedChannel?.id) {
+                    val msgBody = args[0] as String
+
+                    val userName = args[3] as String
+                    val usetAvatar = args[4] as String
+                    val usetAvatarColor = args[5] as String
+                    val id = args[6] as String
+                    val timeStamp = args[7] as String
+
+                    val newMessage = Message(msgBody, userName, channelId, usetAvatar, usetAvatarColor, id, timeStamp)
+                    MessageService.messages.add(newMessage)
+                }
+            }
         }
     }
 
