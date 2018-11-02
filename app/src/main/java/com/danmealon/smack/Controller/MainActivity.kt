@@ -73,6 +73,10 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
         setupAdapters()
 
+        //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different); note that you need to unregister it when you leave the activity
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
+            IntentFilter(BROADCAST_USER_DATA_CHANGE))
+
         channel_list.setOnItemClickListener { _, _, i, _ -> //means only gonna be using the i
 
             selectedChannel = MessageService.channels[i]
@@ -91,14 +95,6 @@ class MainActivity : AppCompatActivity() {
 
     //connecting socket to API
     //remember Activity life cycle
-
-    override fun onResume() {
-        //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different); note that you need to unregister it when you leave the activity
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
-            IntentFilter(BROADCAST_USER_DATA_CHANGE))
-
-        super.onResume()
-    }
 
     override fun onDestroy() {
         //we destroy when we disconnecting from socket connection
@@ -179,6 +175,7 @@ class MainActivity : AppCompatActivity() {
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
             loginBtnNavHeader.text = "Login"
+            mainChannelName.text = "Please log in"
 
         }else{
             //explicit intent as we know where we are sending intent to
