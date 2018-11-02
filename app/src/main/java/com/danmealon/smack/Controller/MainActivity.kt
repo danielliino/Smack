@@ -210,7 +210,16 @@ class MainActivity : AppCompatActivity() {
 
 
     fun sendMsgBtnClicked(view:View){
-        hideKeyboard()
+        if (App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null){
+            val userId = UserDataService.id
+            val channelId = selectedChannel!!.id //!! as we know that it is not null
+            socket.emit("newMessage", messageTextField.text.toString(), userId, channelId,
+                UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+
+            messageTextField.text.clear()
+            hideKeyboard()
+        }
+
 
     }
 
