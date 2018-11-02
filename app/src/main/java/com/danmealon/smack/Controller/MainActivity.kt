@@ -14,15 +14,19 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.danmealon.smack.Model.Channel
 import com.danmealon.smack.R
 import com.danmealon.smack.Services.AuthService
+import com.danmealon.smack.Services.MessageService
 import com.danmealon.smack.Services.UserDataService
 import com.danmealon.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import com.danmealon.smack.Utilities.SOCKET_URL
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+import java.lang.StringBuilder
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        socket.connect()
+        //receiving data ("on")
+        socket.on("channelCreated", onNewChannel)
 
         val toggle = ActionBarDrawerToggle(   //drawer that comes out from the left on main activity
             this, drawer_layout, toolbar,
@@ -52,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different); note that you need to unregister it when you leave the activity
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
             IntentFilter(BROADCAST_USER_DATA_CHANGE))
-        socket.connect()
+
         super.onResume()
     }
 
@@ -139,6 +146,27 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
+
+    //emit listener creation, we use the array of type any
+
+    private val onNewChannel = Emitter.Listener { args ->  //background thread
+        //we say that this listener is on background/ worker thread and we need to get back to main thread to Update our UI
+        runOnUiThread {
+            //we are back on UI thread now, we can update our listView
+            val channelName = args[0] as String
+            val channelDescription =  args[1] as String
+            val channelId = args[2] as String
+
+            //new channel object creation
+            val newChannel = Channel(channelName, channelDescription, channelId)
+            //saving object in message service channel array
+            MessageService.channels.add(newChannel)
+            println(newChannel.name)
+            println(newChannel.description)
+            println(newChannel.id)
+        }
+    }
+
 
     fun sendMsgBtnClicked(view:View){
         hideKeyboard()
