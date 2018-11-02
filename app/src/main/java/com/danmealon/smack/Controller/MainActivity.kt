@@ -11,10 +11,12 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import com.danmealon.smack.Adapters.MessageAdapter
 import com.danmealon.smack.Model.Channel
 import com.danmealon.smack.Model.Message
 import com.danmealon.smack.R
@@ -35,8 +37,9 @@ class MainActivity : AppCompatActivity() {
 
     //socket creation
     val socket = IO.socket(SOCKET_URL)
-    //creating an adapter for list view if Channels type
+    //creating an adapter for list view of Channels type
     lateinit var channelAdapter: ArrayAdapter<Channel>
+    lateinit var messageAdapter: MessageAdapter
     //variable for knowing which messages to download, only for a specific channel that we selected (nullable, cause if we didn't login we couldn't select the channel)
     var selectedChannel : Channel? = null
 
@@ -44,6 +47,12 @@ class MainActivity : AppCompatActivity() {
         channelAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, MessageService.channels)
         //adding adapter to list view
         channel_list.adapter = channelAdapter
+
+        messageAdapter = MessageAdapter(this, MessageService.messages)
+        messageListView.adapter = messageAdapter
+        //when you work with recycle view you have to have layout manager
+        val layoutManager = LinearLayoutManager(this)
+        messageListView.layoutManager = layoutManager
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,9 +143,15 @@ class MainActivity : AppCompatActivity() {
         if (selectedChannel != null){
             MessageService.getMessages(selectedChannel!!.id){ complete ->
                 if (complete){
-                    for (message in MessageService.messages){
-                        println(message.message)
+
+                    //Notifying our message adapter that it needs to reload a data.
+                    messageAdapter.notifyDataSetChanged()
+                    //Scrolling to bottom, we don't want to start from the top as it always adds new message and keeps updating
+                    if(messageAdapter.itemCount>0) { //get access of how many items are being displayed
+                        messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1) //position that we want is the last one in the messages array
+
                     }
+
                 }
 
             }
@@ -156,6 +171,8 @@ class MainActivity : AppCompatActivity() {
         if (App.prefs.isLoggedIn){
         // log out (will clear out all user's data)
             UserDataService.logout()
+            channelAdapter.notifyDataSetChanged()
+            messageAdapter.notifyDataSetChanged()
             //setting everything back to default
             userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
@@ -241,6 +258,8 @@ class MainActivity : AppCompatActivity() {
 
                     val newMessage = Message(msgBody, userName, channelId, usetAvatar, usetAvatarColor, id, timeStamp)
                     MessageService.messages.add(newMessage)
+                    messageAdapter.notifyDataSetChanged()
+                    messageListView.smoothScrollToPosition(messageAdapter.itemCount - 1)
                 }
             }
         }
