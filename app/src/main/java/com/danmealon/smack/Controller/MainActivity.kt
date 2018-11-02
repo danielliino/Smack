@@ -1,14 +1,22 @@
 package com.danmealon.smack.Controller
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.danmealon.smack.R
+import com.danmealon.smack.Services.AuthService
+import com.danmealon.smack.Services.UserDataService
+import com.danmealon.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +32,27 @@ class MainActivity : AppCompatActivity() {
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+
+        //registering broadcast receiver with Intent type of IntentFilter (Intents type like radio stations can be different)
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReceiver,
+            IntentFilter(BROADCAST_USER_DATA_CHANGE))
+    }
+
+    //creating receiver (when the user's data changes i.e. user login, our create a new user or logout, then we could call this receiver )
+
+    private val userDataChangeReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {//when we receive a broadcast this function is called
+            //whenever the broadcast has been sent out, whatever we wants then to happen, happens here
+            if (AuthService.isLoggedIn){
+                userNameNavHeader.text = UserDataService.name
+                userEmailNavHeader.text = UserDataService.email
+                //getting resource id
+                val resourceId = resources.getIdentifier(UserDataService.avatarName,"drawable",
+                    packageName)
+                userImageNavHeader.setImageResource(resourceId)
+                loginBtnNavHeader.text = "Logout"
+            }
+        }
     }
 
     override fun onBackPressed() {
