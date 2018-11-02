@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.danmealon.smack.Model.Channel
+import com.danmealon.smack.Model.Message
 import com.danmealon.smack.R
 import com.danmealon.smack.Services.AuthService
 import com.danmealon.smack.Services.MessageService
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
         socket.connect()
         //receiving data ("on")
         socket.on("channelCreated", onNewChannel)
+        socket.on("messageCreated", onNewMessage)
 
         val toggle = ActionBarDrawerToggle(   //drawer that comes out from the left on main activity
             this, drawer_layout, toolbar,
@@ -208,6 +210,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val onNewMessage = Emitter.Listener { args ->  
+
+        runOnUiThread {
+            val msgBody = args[0] as String
+            val channelId = args[2] as String
+            val userName = args[3] as String
+            val usetAvatar = args[4] as String
+            val usetAvatarColor = args[5] as String
+            val id = args[6] as String
+            val timeStamp = args[7] as String
+
+            val newMessage = Message(msgBody, userName, channelId, usetAvatar, usetAvatarColor, id, timeStamp)
+            MessageService.messages.add(newMessage)
+            println(newMessage.message)
+        }
+    }
 
     fun sendMsgBtnClicked(view:View){
         if (App.prefs.isLoggedIn && messageTextField.text.isNotEmpty() && selectedChannel != null){

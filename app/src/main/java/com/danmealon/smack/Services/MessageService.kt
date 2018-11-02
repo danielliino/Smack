@@ -7,12 +7,14 @@ import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
 import com.danmealon.smack.Controller.App
 import com.danmealon.smack.Model.Channel
+import com.danmealon.smack.Model.Message
 import com.danmealon.smack.Utilities.URL_GET_CHANNELS
 import org.json.JSONException
 
 object MessageService {
 
     val channels = ArrayList<Channel>()
+    val messages = ArrayList<Message>()
 
     //function that that traverse an array of channels.
 
