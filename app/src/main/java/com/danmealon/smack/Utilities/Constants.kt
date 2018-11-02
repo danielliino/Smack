@@ -6,6 +6,8 @@ const val URL_REGISTER = "${BASE_URL}account/register"
 const val URL_LOGIN = "${BASE_URL}account/login"//we hit this api endpoint when we want to login a user
 const val URL_CREATE_USER = "${BASE_URL}user/add"
 
+const val URL_GET_USER = "${BASE_URL}user/byEmail/"
+
 //broadcast constants
 
 const val BROADCAST_USER_DATA_CHANGE = "BROADCAST_USER_DATA_CHANGE"

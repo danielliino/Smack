@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         // log out (will clear out all user's data)
             UserDataService.logout()
             //setting everything back to default
-            userNameNavHeader.text = "Login"
+            userNameNavHeader.text = ""
             userEmailNavHeader.text = ""
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
