@@ -16,11 +16,11 @@ class LoginScreen {
     //All view actions and asserts are performed on the UI thread
     //(ensuring sequential execution).
 
-    val email = "w@w.com"
-    val password = "123456"
+    private val email = "w@w.com"
+    private val password = "123456"
 
     //type in email
-    val editTextEmail: ViewInteraction
+    private val editTextEmail: ViewInteraction
     get() = onView(withId(R.id.loginEmailTxt))
 
     fun enterEmail(){
@@ -28,7 +28,7 @@ class LoginScreen {
     }
 
     //type in password
-    val editTextPassword: ViewInteraction
+    private val editTextPassword: ViewInteraction
     get() = onView(withId(R.id.loginPasswordText))
 
     fun enterPassword(){
@@ -36,7 +36,7 @@ class LoginScreen {
     }
 
     //click on login
-    val loginBtn: ViewInteraction //the type of this variable is ViewInteraction
+    private val loginBtn: ViewInteraction //the type of this variable is ViewInteraction
     get() = onView(withId(R.id.loginLoginBtn)) //we find the id of the btn
 
     fun clickOnLoginBtn(){
