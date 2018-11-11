@@ -48,7 +48,7 @@ class ChatTest {
                 .enterChannelName()
                 .enterChannelDescription()
                 .clickOnAddBtn()
-        sleep(2000)
+        //sleep(2000)
         mainScreen.channelDisplayed()
     }
 

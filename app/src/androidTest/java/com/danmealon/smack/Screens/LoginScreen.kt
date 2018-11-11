@@ -83,11 +83,6 @@ class LoginScreen : BaseScreen() {
             .check(matches(isDisplayed()))
     }
 
-    //type in incorrect email
-    //type in incorrect password
-    //click on login
-    //check toast message
-
     init {//first thing that is automatically executed whenever you create instance of the class (that we are on the right screen)
         uniqueView.check(matches(isDisplayed()))
     }

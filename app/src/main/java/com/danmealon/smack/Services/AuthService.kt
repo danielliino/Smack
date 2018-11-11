@@ -55,6 +55,7 @@ object AuthService {
         jsonBody.put("password", password)
         val requestBody = jsonBody.toString()
 
+        IdlingResourceHolder.idlingResource.increment()
         //we expecting to get JsonObject not a String, we put null because we are not passing the object here
         val loginRequest = object: JsonObjectRequest(Method.POST, URL_LOGIN, null, Response.Listener {response->
             //this is where we parse json object
@@ -71,12 +72,16 @@ object AuthService {
             }catch (e: JSONException){
                 Log.d("JSON", "EXC:" + e.localizedMessage)
                 complete(false)
+            } finally {
+                IdlingResourceHolder.idlingResource.decrement()
             }
 
         },Response.ErrorListener {error->
             //this is where we deal with error
-            Log.d("ERROR","Could not login user: $error")
-            complete(false)
+            try{Log.d("ERROR","Could not login user: $error")
+            complete(false)} finally {
+                IdlingResourceHolder.idlingResource.decrement()
+            }
         }){
             override fun getBodyContentType(): String {
                 return return "application/json; charset=utf-8"
