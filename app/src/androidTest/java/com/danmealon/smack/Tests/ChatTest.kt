@@ -16,6 +16,7 @@ import com.danmealon.smack.R
 import com.danmealon.smack.Screens.Credentials
 import com.danmealon.smack.Screens.LoginScreen
 import com.danmealon.smack.Screens.MainScreen
+import com.danmealon.smack.Services.MessageService
 import com.danmealon.smack.Services.UserDataService.logout
 import com.danmealon.smack.Utilities.*
 import org.hamcrest.CoreMatchers.*
@@ -93,9 +94,13 @@ class ChatTest {
 
             mainScreen.addNewChannel()
 
-        //sleep(2000)
-        
+
+        //click on channel
         onData(anything()).inAdapterView(withId(R.id.channel_list))
-            .onChildView(withText(mainScreen.channelName)).perform(click())
+            .atPosition(MessageService.channels.size-1)
+            .perform(click())
+
+        //generate messages
+        //scroll to first message
     }
 }

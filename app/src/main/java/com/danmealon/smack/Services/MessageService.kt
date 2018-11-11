@@ -18,6 +18,7 @@ object MessageService {
 
     val channels = ArrayList<Channel>()
     val messages = ArrayList<Message>()
+    
 
     //function that that traverse an array of channels.
 
