@@ -44,6 +44,9 @@ class MainScreen {
 
     fun clickOnAddBtn(){
         addBtn.perform(click())
+    }
+
+    fun channelDisplayed() {
         onView(ViewMatchers.withText("#TurkStreet Channel"))
             .check(matches(isDisplayed()))
     }

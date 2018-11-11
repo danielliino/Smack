@@ -2,13 +2,15 @@ package com.danmealon.smack.Screens
 
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.ViewInteraction
-import android.support.test.espresso.action.ViewActions.click
-import android.support.test.espresso.action.ViewActions.typeText
+import android.support.test.espresso.action.ViewActions.*
+import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.matcher.ViewMatchers
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import android.support.test.espresso.matcher.ViewMatchers.withId
 import com.danmealon.smack.R
 import kotlinx.android.synthetic.main.activity_login.*
 
-class LoginScreen {
+class LoginScreen: BaseScreen() {
 
     //OnView returns ViewInteraction class.
     //ViewInteraction. Provides the primary interface to perform actions or asserts on views.
@@ -39,8 +41,16 @@ class LoginScreen {
     private val loginBtn: ViewInteraction //the type of this variable is ViewInteraction
     get() = onView(withId(R.id.loginLoginBtn)) //we find the id of the btn
 
-    fun clickOnLoginBtn(){
+    fun clickOnLoginBtn(): MainScreen{//means we are returning MainScreen
         loginBtn.perform(click())
+        return MainScreen()
+    }
 
+    //putting unique element to make sure we are on LoginScreen by using constructor
+    override val uniqueView: ViewInteraction
+        get() = loginBtn
+
+    init {//first thing that is automatically executed whenever you crete instance of the class (that we are on the right screen)
+        uniqueView.check(matches(isDisplayed()))
     }
 }
