@@ -29,21 +29,18 @@ class ChatTest {
     fun addANewChannel(){
 
         onView(withContentDescription("Open navigation drawer"))//If there is no Id or text use content description.
-
             .perform(click())
         onView(withId(R.id.loginBtnNavHeader))
             .perform(click())
         val loginScreen = LoginScreen() //we create an object of LoginScreen class
+            .enterEmail()
+            .enterPassword()
 
-        loginScreen.enterEmail()
-        loginScreen.enterPassword()
-        //loginScreen.clickOnLoginBtn()
-        sleep(3000)
         val mainScreen = loginScreen.clickOnLoginBtn() //as we tap on LoginBtn we return Main Screen
-        mainScreen.clickOnChannelBtn()
-        mainScreen.enterChannelName()
-        mainScreen.enterChannelDescription()
-        mainScreen.clickOnAddBtn()
+            .clickOnChannelBtn()
+            .enterChannelName()
+            .enterChannelDescription()
+            .clickOnAddBtn()
         sleep(2000)
         mainScreen.channelDisplayed()
 

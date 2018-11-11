@@ -9,7 +9,7 @@ import android.support.test.espresso.matcher.ViewMatchers
 import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
 import com.danmealon.smack.R
 
-class MainScreen {
+class MainScreen : BaseScreen() {
 
     private val channelName = "TurkStreet Channel"
     private val channelDescription = "First added channel using Espresso (Kotlin based)"
@@ -18,36 +18,49 @@ class MainScreen {
     private val channelBtn: ViewInteraction
         get() = onView(ViewMatchers.withId(R.id.addChannelBtn))
 
-    fun clickOnChannelBtn(){
-        channelBtn.perform(click())
-    }
+    //putting unique element to make sure we are on LoginScreen by using constructor
+    override val uniqueView: ViewInteraction
+        get() = channelBtn
 
     //enter channel name
     private val channelDialogName: ViewInteraction
         get() = onView(ViewMatchers.withId(R.id.addChannelNameTxt))
 
-    fun enterChannelName(){
-        channelDialogName.perform(typeText(channelName))
-    }
-
     //enter channel description
     private val channelDialogDescription: ViewInteraction
         get() = onView(ViewMatchers.withId(R.id.addChannelDescTxt))
-
-    fun enterChannelDescription(){
-        channelDialogDescription.perform(typeText(channelDescription))
-    }
 
     //click on addBtn and check if new channel is displayed
     private val addBtn: ViewInteraction
         get() = onView(ViewMatchers.withText("ADD"))
 
-    fun clickOnAddBtn(){
-        addBtn.perform(click())
+    fun clickOnChannelBtn():MainScreen{
+        channelBtn.perform(click())
+        return this
     }
 
-    fun channelDisplayed() {
+    fun enterChannelName():MainScreen{
+        channelDialogName.perform(typeText(channelName))
+        return this
+    }
+
+    fun enterChannelDescription():MainScreen{
+        channelDialogDescription.perform(typeText(channelDescription))
+        return this
+    }
+
+    fun clickOnAddBtn():MainScreen{
+        addBtn.perform(click())
+        return this
+    }
+
+    fun channelDisplayed():MainScreen {
         onView(ViewMatchers.withText("#TurkStreet Channel"))
             .check(matches(isDisplayed()))
+        return this
+    }
+
+    init {//first thing that is automatically executed whenever you create instance of the class (that we are on the right screen)
+        uniqueView.check(matches(isDisplayed()))
     }
 }
