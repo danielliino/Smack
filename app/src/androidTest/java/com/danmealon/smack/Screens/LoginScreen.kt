@@ -70,7 +70,7 @@ class LoginScreen : BaseScreen() {
 
     fun clickOnLoginBtn(usersCred: Credentials): BaseScreen{//means we are returning global screen so that there can be returned its children
         loginBtn.perform(click())
-        sleep(4000)
+        //sleep(4000)
         return when (usersCred) { //when case checks enumeration (can have lots of cases: valid, invalid etc -it is not boolean)
             Credentials.Valid -> MainScreen()
             else ->  this

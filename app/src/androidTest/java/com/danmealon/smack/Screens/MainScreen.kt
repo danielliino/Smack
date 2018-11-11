@@ -11,7 +11,7 @@ import com.danmealon.smack.R
 
 class MainScreen : BaseScreen() {
 
-    private val channelName = "TurkStreet # ${(Math.random() * 1000).toInt()}"
+      var channelName: String =""
     private val channelDescription = "First added channel using Espresso (Kotlin based)"
 
     //click on channelBtn
@@ -34,30 +34,27 @@ class MainScreen : BaseScreen() {
     private val addBtn: ViewInteraction
         get() = onView(ViewMatchers.withText("ADD"))
 
-    fun clickOnChannelBtn():MainScreen{
+    fun addNewChannel() {
         channelBtn.perform(click())
-        return this
-    }
-
-    fun enterChannelName():MainScreen{
-        channelDialogName.perform(typeText(channelName))
-        return this
-    }
-
-    fun enterChannelDescription():MainScreen{
+        channelDialogName.perform(typeText(genName()))
         channelDialogDescription.perform(typeText(channelDescription))
-        return this
+        addBtn.perform(click())
     }
 
-    fun clickOnAddBtn():MainScreen{
-        addBtn.perform(click())
-        return this
+    private fun genName(): String {
+      channelName ="TurkStreet # ${(Math.random() * 1000).toInt()}"
+        return channelName
     }
 
     fun channelDisplayed():MainScreen {
         onView(ViewMatchers.withText("#$channelName"))
             .check(matches(isDisplayed()))
         return this
+    }
+
+    fun clickOnChannel() {
+        onView(ViewMatchers.withText("#$channelName"))
+            .perform(click())
     }
 
     init {//first thing that is automatically executed whenever you create instance of the class (that we are on the right screen)

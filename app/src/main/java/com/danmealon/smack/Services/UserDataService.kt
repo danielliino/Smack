@@ -1,6 +1,7 @@
 package com.danmealon.smack.Services
 
 import android.graphics.Color
+import android.support.annotation.VisibleForTesting
 import com.danmealon.smack.Controller.App
 import java.util.*
 
@@ -12,6 +13,7 @@ object UserDataService {
     var email = ""
     var name = ""
 
+    @VisibleForTesting
     fun logout(){
 
         id = ""
@@ -24,7 +26,6 @@ object UserDataService {
         App.prefs.isLoggedIn = false
         MessageService.clearMessages()
         MessageService.clearChannels()
-
     }
 
     //function to store background color, we returning int instead of color because it is the way android works, when you create a color it is actually an int

@@ -8,6 +8,7 @@ import com.android.volley.toolbox.Volley
 import com.danmealon.smack.Controller.App
 import com.danmealon.smack.Model.Channel
 import com.danmealon.smack.Model.Message
+import com.danmealon.smack.Utilities.IdlingResourceHolder
 import com.danmealon.smack.Utilities.URL_GET_CHANNELS
 import com.danmealon.smack.Utilities.URL_GET_MESSAGES
 import org.json.JSONArray
@@ -21,6 +22,7 @@ object MessageService {
     //function that that traverse an array of channels.
 
     fun getChannels(complete: (Boolean)->Unit){
+        IdlingResourceHolder.idlingResource.increment()
         val channelsRequest = object : JsonArrayRequest(Method.GET, URL_GET_CHANNELS, null, Response.Listener { response ->
 
             //looping and extracting info that we need
@@ -42,12 +44,18 @@ object MessageService {
             }catch (e: JSONException){
                 Log.d("JSON", "EXC:" + e.localizedMessage)
                 complete(false)
+            } finally {
+                IdlingResourceHolder.idlingResource.decrement()
             }
 
 
         }, Response.ErrorListener { error ->
-            Log.d("ERROR", "Could not retrieve channels")
-            complete(false)
+           try {
+               Log.d("ERROR", "Could not retrieve channels")
+               complete(false)
+           }finally {
+               IdlingResourceHolder.idlingResource.decrement()
+           }
         }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"//tells us what kind of encoding to do
