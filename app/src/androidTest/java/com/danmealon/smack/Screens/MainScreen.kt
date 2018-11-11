@@ -11,7 +11,9 @@ import com.danmealon.smack.R
 
 class MainScreen : BaseScreen() {
 
-      var channelName: String =""
+    var channelName: String = ""
+    var channelMessage: String = ""
+
     private val channelDescription = "First added channel using Espresso (Kotlin based)"
 
     //click on channelBtn
@@ -34,6 +36,12 @@ class MainScreen : BaseScreen() {
     private val addBtn: ViewInteraction
         get() = onView(ViewMatchers.withText("ADD"))
 
+    private val messageField: ViewInteraction
+        get() = onView(ViewMatchers.withId(R.id.messageTextField))
+
+    private val messageBtn: ViewInteraction
+        get() = onView(ViewMatchers.withId(R.id.sendMessageBtn))
+
     fun addNewChannel() {
         channelBtn.perform(click())
         channelDialogName.perform(typeText(genName()))
@@ -52,9 +60,14 @@ class MainScreen : BaseScreen() {
         return this
     }
 
-    fun clickOnChannel() {
-        onView(ViewMatchers.withText("#$channelName"))
-            .perform(click())
+    fun genMessage(): String {
+
+        for (i in 0..10) {
+            channelMessage = "What's up everybody # ${(Math.random() * 1000).toInt()}"
+            messageField.perform(typeText(channelMessage))
+            messageBtn.perform(click())
+        }
+        return channelMessage
     }
 
     init {//first thing that is automatically executed whenever you create instance of the class (that we are on the right screen)

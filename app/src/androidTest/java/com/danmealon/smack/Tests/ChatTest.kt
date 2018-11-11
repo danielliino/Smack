@@ -101,6 +101,7 @@ class ChatTest {
             .perform(click())
 
         //generate messages
+            mainScreen.genMessage()
         //scroll to first message
     }
 }
