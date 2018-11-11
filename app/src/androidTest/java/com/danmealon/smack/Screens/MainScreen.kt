@@ -11,7 +11,7 @@ import com.danmealon.smack.R
 
 class MainScreen : BaseScreen() {
 
-    private val channelName = "TurkStreet Channel"
+    private val channelName = "TurkStreet # ${(Math.random() * 1000).toInt()}"
     private val channelDescription = "First added channel using Espresso (Kotlin based)"
 
     //click on channelBtn
@@ -55,7 +55,7 @@ class MainScreen : BaseScreen() {
     }
 
     fun channelDisplayed():MainScreen {
-        onView(ViewMatchers.withText("#TurkStreet Channel"))
+        onView(ViewMatchers.withText("#$channelName"))
             .check(matches(isDisplayed()))
         return this
     }

@@ -1,5 +1,6 @@
 package com.danmealon.smack.Screens
 
+import android.app.PendingIntent.getActivity
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.ViewInteraction
 import android.support.test.espresso.action.ViewActions.*
@@ -10,6 +11,25 @@ import android.support.test.espresso.matcher.ViewMatchers.withId
 import com.danmealon.smack.R
 import kotlinx.android.synthetic.main.activity_login.*
 import java.lang.Thread.sleep
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.RootMatchers.withDecorView
+import android.support.test.espresso.Espresso.onView
+import android.support.test.espresso.assertion.ViewAssertions.matches
+import android.support.test.espresso.matcher.RootMatchers.withDecorView
+import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
+import android.support.test.espresso.matcher.ViewMatchers.withText
+import android.support.test.rule.ActivityTestRule
+import com.danmealon.smack.Controller.MainActivity
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.not
+
+
+
+enum class Credentials{ //Enum is a class with concrete cases
+
+    Valid,
+    Invalid
+}
 
 class LoginScreen : BaseScreen() {
 
@@ -38,20 +58,29 @@ class LoginScreen : BaseScreen() {
     override val uniqueView: ViewInteraction
         get() = loginBtn
 
-    fun enterEmail():LoginScreen{
+    fun enterEmail(email: String):LoginScreen{
         editTextEmail.perform(typeText(email))
         return this
     }
 
-    fun enterPassword():LoginScreen{
+    fun enterPassword(password: String):LoginScreen{
         editTextPassword.perform(typeText(password))
         return this
     }
 
-    fun clickOnLoginBtn(): MainScreen{//means we are returning MainScreen
+    fun clickOnLoginBtn(usersCred: Credentials): BaseScreen{//means we are returning global screen so that there can be returned its children
         loginBtn.perform(click())
         sleep(4000)
-        return MainScreen()
+        return when (usersCred) { //when case checks enumeration (can have lots of cases: valid, invalid etc -it is not boolean)
+            Credentials.Valid -> MainScreen()
+            else ->  this
+        }
+    }
+//    check toast
+    fun checkToastIsShown(rule: ActivityTestRule<MainActivity>) {
+        onView(withText("Something went wrong, please try again!")).inRoot(withDecorView(not(`is`(
+           rule.activity.window.decorView))))
+            .check(matches(isDisplayed()))
     }
 
     //type in incorrect email
